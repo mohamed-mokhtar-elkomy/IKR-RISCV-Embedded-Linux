@@ -1,0 +1,29 @@
+# RISC-V Embedded Linux Build System - Version Information
+# IKR Institute, Stuttgart University
+
+VERSION=1.0.0
+BUILD_DATE=2026-04-18
+RELEASE_NAME=Initial Release
+AUTHOR=Mohamed Elkomy
+INSTITUTION=IKR Institute, Stuttgart University
+
+# Component Versions
+KERNEL_VERSION=6.8
+UBOOT_VERSION=2024.04
+OPENSBI_VERSION=1.3.1
+TOOLCHAIN_VERSION=2024.02
+
+# Custom Platform Version
+CUSTOM_PLATFORM_VERSION=1.0.0
+CUSTOM_PLATFORM_BUILD=20260418
+
+# Build Information
+BUILD_ARCH=riscv64
+BUILD_BITS=64
+
+# Changelog
+# v1.0.0 (2026-04-18) - Initial release
+#   - Custom OpenSBI platform implementation
+#   - Linux kernel configuration
+#   - U-Boot bootloader setup
+#   - Complete build system for RISC-V embedded Linux
