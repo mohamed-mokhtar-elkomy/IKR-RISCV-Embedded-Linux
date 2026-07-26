@@ -1,0 +1,18 @@
+[submodule "opensbi"]
+	path = opensbi
+	url = https://github.com/mohamed-mokhtar-elkomy/opensbi.git
+[submodule "riscv-gnu-toolchain"]
+	path = riscv-gnu-toolchain
+	url = https://github.com/mohamed-mokhtar-elkomy/riscv-gnu-toolchain.git
+[submodule "linux"]
+	path = linux
+	url = https://github.com/mohamed-mokhtar-elkomy/linux.git
+[submodule "u-boot"]
+	path = u-boot
+	url = https://github.com/mohamed-mokhtar-elkomy/u-boot.git
+[submodule "busybox"]
+	path = busybox
+	url = https://git.busybox.net/busybox
+[submodule "qemu"]
+	path = qemu
+	url = https://gitlab.com/qemu-project/qemu
