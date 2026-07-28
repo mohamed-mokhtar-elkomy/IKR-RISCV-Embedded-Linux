@@ -7,6 +7,7 @@
 [submodule "linux"]
 	path = linux
 	url = https://github.com/mohamed-mokhtar-elkomy/linux.git
+	branch = stuttgart-ikr-elkomy
 [submodule "u-boot"]
 	path = u-boot
 	url = https://github.com/mohamed-mokhtar-elkomy/u-boot.git
