@@ -11,6 +11,7 @@
 [submodule "u-boot"]
 	path = u-boot
 	url = https://github.com/mohamed-mokhtar-elkomy/u-boot.git
+	branch = stuttgart-ikr-elkomy
 [submodule "busybox"]
 	path = busybox
 	url = https://git.busybox.net/busybox
