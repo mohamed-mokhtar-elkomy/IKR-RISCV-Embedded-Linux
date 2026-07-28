@@ -1,6 +1,7 @@
 [submodule "opensbi"]
 	path = opensbi
 	url = https://github.com/mohamed-mokhtar-elkomy/opensbi.git
+	branch = stuttgart-ikr-elkomy
 [submodule "riscv-gnu-toolchain"]
 	path = riscv-gnu-toolchain
 	url = https://github.com/mohamed-mokhtar-elkomy/riscv-gnu-toolchain.git
