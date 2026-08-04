@@ -1,5 +1,9 @@
 # U-Boot
 
+## Current version used
+
+- U-Boot: `2026.04`
+
 ## What it does
 
 - Builds U-Boot from `u-boot/`

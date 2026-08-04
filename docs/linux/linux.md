@@ -1,5 +1,9 @@
 # Linux kernel
 
+## Current version used
+
+- Linux: `7.0.0`
+
 ## What it does
 
 - Builds Linux for RISC-V from `linux/`

@@ -1,5 +1,9 @@
 # Rootfs (BusyBox initramfs)
 
+## Current version used
+
+- BusyBox: `1.39.0.git`
+
 ## What it does
 
 - Builds a static BusyBox using `configs/busybox/ikr.config` (merged on top

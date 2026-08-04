@@ -1,9 +1,13 @@
 # OpenSBI
 
+## Current version used
+
+- OpenSBI: `1.8`
+
 ## What it does
 
 - Builds OpenSBI from `opensbi/` for platform `ikr`
-- Compiles device tree: `ikr.dts` -> `ikr.dtb`
+- Compiles device tree: `device-tree/ikr.dts` -> `ikr.dtb`
 - Uses `output/disk.img` as `FW_PAYLOAD_PATH` (payload input)
 - Produces `fw_payload.bin` and copies it to `output/fw_payload.bin`
 
@@ -18,7 +22,7 @@ Exported by `scripts/setup-env.sh` (source it first):
 ## Input files required before build
 
 - `output/disk.img` (build disk image first)
-- `ikr.dts`
+- `device-tree/ikr.dts`
 
 ## How to run
 
