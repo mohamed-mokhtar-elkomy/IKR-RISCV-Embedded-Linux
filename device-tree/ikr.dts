@@ -1,0 +1,76 @@
+/dts-v1/;
+
+/ {
+    #address-cells = <2>;
+    #size-cells = <2>;
+    compatible = "ikr,rvemu";
+    model = "ikr-riscv64";
+
+    aliases {
+        serial0 = "/soc/uart@1";
+    };
+
+    chosen {
+        bootargs = "earlycon=sbi console=hvcttyIKR0 loglevel=8";
+        stdout-path = "serial0";
+    };
+
+    cpus {
+        #address-cells = <1>;
+        #size-cells = <0>;
+        timebase-frequency = <10000000>;
+ 
+        cpu0: cpu@0 {
+            device_type = "cpu";
+            reg = <0>;
+            status = "okay";
+            compatible = "riscv";
+            riscv,isa = "rv64imafdc";
+            mmu-type = "riscv,sv39";
+
+            cpu0_intc: interrupt-controller {
+                #interrupt-cells = <1>;
+                interrupt-controller;
+                compatible = "riscv,cpu-intc";
+            };
+        };
+    };
+
+    memory@40000000 {
+        device_type = "memory";
+        reg = <0x0 0x40000000 0x0 0x08000000>;
+    };
+
+    soc {
+        #address-cells = <2>;
+        #size-cells = <2>;
+        compatible = "simple-bus";
+        ranges;
+
+        plic: interrupt-controller@200100 {
+            #address-cells = <0>;
+            #interrupt-cells = <1>;
+            interrupt-controller;
+            compatible = "riscv,plic0";
+            reg = <0x0 0x00200100 0x0 0x201000>;
+            riscv,ndev = <128>;
+            interrupts-extended = <&cpu0_intc 11 &cpu0_intc 9>;
+        };
+
+        timer@80 {
+            compatible = "riscv,aclint-mtimer";
+            interrupts-extended = <&cpu0_intc 7>;
+            reg = <0x0 0x00000080 0x0 0x8>,
+                  <0x0 0x00000088 0x0 0x8>;
+        };
+
+        uart@1 {
+            compatible = "ikr,uart";
+            reg = <0x0 0x00000001 0x0 0x10>;
+            interrupt-parent = <&plic>;
+            interrupts = <10>;
+            status = "okay";
+        };
+
+    };
+};
