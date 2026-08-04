@@ -12,3 +12,5 @@ ikr-repo/
 docs/tmp/
 rvemu/
 tools/
+temp/
+trace.txt
