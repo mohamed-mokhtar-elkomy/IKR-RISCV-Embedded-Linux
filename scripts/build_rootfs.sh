@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# BUSYBOX_SRC_DIR="${ROOT_DIR}/busybox-1.37.0"
 BUSYBOX_SRC_DIR="${ROOT_DIR}/busybox"
 CONFIG_FRAGMENT="${ROOT_DIR}/configs/busybox/ikr.config"
 
