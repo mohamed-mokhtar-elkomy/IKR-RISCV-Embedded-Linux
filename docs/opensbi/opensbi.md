@@ -35,11 +35,11 @@ source scripts/setup-env.sh
 
 - `PLATFORM=ikr`
 - `CROSS_COMPILE=${CROSS_COMPILE}`
-- `FW_FDT_PATH=ikr.dtb`
+- `FW_FDT_PATH=output/ikr.dtb`
 - `FW_PAYLOAD_PATH=output/disk.img`
 
 ## Output
 
-- Generated DTB: `ikr.dtb`
+- Generated DTB: `output/ikr.dtb`
 - OpenSBI payload copy: `output/fw_payload.bin`
 - Upstream build artifact: `opensbi/build/platform/ikr/firmware/fw_payload.bin`

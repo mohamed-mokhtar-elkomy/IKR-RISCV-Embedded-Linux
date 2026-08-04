@@ -6,7 +6,7 @@ set -euo pipefail
 
 OPENSBI_SRC_DIR="${ROOT_DIR}/opensbi"
 
-dtc -I dts -O dtb -o "${ROOT_DIR}/ikr.dtb" "${ROOT_DIR}/ikr.dts"
+dtc -I dts -O dtb -o "${OUTPUT_DIR}/ikr.dtb" "${ROOT_DIR}/device-tree/ikr.dts"
 
 if [[ ! -d "${OPENSBI_SRC_DIR}" ]]; then
     echo "Error: opensbi source directory not found at: ${OPENSBI_SRC_DIR}" >&2
@@ -23,7 +23,7 @@ cd "${OPENSBI_SRC_DIR}"
 make -j"$(nproc)" \
     PLATFORM=ikr \
     CROSS_COMPILE="${CROSS_COMPILE}" \
-    FW_FDT_PATH="${ROOT_DIR}/ikr.dtb" \
+    FW_FDT_PATH="${OUTPUT_DIR}/ikr.dtb" \
     FW_PAYLOAD_PATH="${DISK_IMAGE}"
 
 FINAL_PAYLOAD="${OPENSBI_SRC_DIR}/build/platform/ikr/firmware/fw_payload.bin"
