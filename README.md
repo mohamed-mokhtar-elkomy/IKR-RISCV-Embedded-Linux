@@ -79,7 +79,7 @@ This initializes all git submodules (Linux, U-Boot, OpenSBI, toolchain, etc.).
 
 ### 2. Build the Toolchain
 
-First, build the RISC-V cross-compiler toolchain (musl libc):
+First, build the RISC-V cross-compiler toolchain (musl libc - recommended):
 
 ```bash
 make build-toolchain-musl
@@ -87,7 +87,7 @@ make build-toolchain-musl
 
 **Note**: This step takes 30-60 minutes. The toolchain will be installed to `riscv64-unknown-linux-musl/`.
 
-For glibc instead of musl:
+For glibc instead of musl (see [docs/toolchain/toolchain.md](docs/toolchain/toolchain.md) for differences):
 ```bash
 make build-toolchain-glibc
 ```
@@ -217,12 +217,32 @@ To modify configurations:
 1. Edit the appropriate config file in `configs/`
 2. Rebuild the component using the corresponding `make build-*` target
 
+### Memory Map and Peripheral Addresses
+
+**⚠️ Important:** When changing memory addresses or peripheral configurations (RAM base, UART, PLIC, timer addresses), you must update multiple files to maintain consistency.
+
+See **[docs/MEMORY_MAP.md](docs/MEMORY_MAP.md)** for:
+- Current memory layout
+- List of all files that need updating for each type of change
+- Verification checklist
+
+**Key memory addresses:**
+- OpenSBI base: `0x40000000` (`opensbi/platform/ikr/objects.mk`)
+- U-Boot base: `0x40200000` (`u-boot/configs/ikr_defconfig`)
+- Linux kernel: `0x42000000` (`u-boot/include/configs/ikr.h`)
+- UART: `0x00000001` (must match in 5 files - see MEMORY_MAP.md)
+
 ### Device Tree
 
-Device tree files are in `device-tree/`:
-- `ikr.dts` - IKR platform device tree source
+Device tree files in the project:
+- `device-tree/ikr.dts` - Primary device tree for Linux boot
+- `opensbi/firmware/ikr.dts` - OpenSBI internal device tree
 
-Compiled device trees (`.dtb`) are generated during the build process.
+**Important:** Two device trees must stay synchronized. Peripheral addresses (UART, PLIC, timer) must match in both files.
+
+Compiled device trees (`.dtb`) are generated automatically during the build process.
+
+See [docs/device-tree/device-tree.md](docs/device-tree/device-tree.md) for complete documentation and [docs/MEMORY_MAP.md](docs/MEMORY_MAP.md) for synchronization requirements.
 
 ## Troubleshooting
 
@@ -232,10 +252,13 @@ Compiled device trees (`.dtb`) are generated during the build process.
 2. **Kernel boot fails at early stage**: Check that rvemu includes MMU fixes (see `docs/rvemu_mmu_issue.md`)
 3. **No console output**: Verify console parameter is set to `console=ttyIKR0` or `console=hvc0`
 4. **Build artifacts missing**: Run `git submodule update --init --recursive` to initialize submodules
+5. **Page faults on device access**: Memory address mismatch - verify all addresses in [docs/MEMORY_MAP.md](docs/MEMORY_MAP.md)
+6. **U-Boot doesn't start**: Check `CONFIG_TEXT_BASE` matches `FW_TEXT_START + FW_PAYLOAD_OFFSET`
 
 ### Detailed Documentation
 
 For in-depth troubleshooting and technical details, see:
+- [docs/MEMORY_MAP.md](docs/MEMORY_MAP.md) - Memory map and file update reference
 - [docs/prerequisites-and-issues.md](docs/prerequisites-and-issues.md) - Common build and boot issues
 - [docs/rvemu_mmu_issue.md](docs/rvemu_mmu_issue.md) - rvemu MMU implementation details
 - [docs/uart_issue_at_kernel.md](docs/uart_issue_at_kernel.md) - UART and console debugging
@@ -255,11 +278,29 @@ This cleans the toolchain, OpenSBI, Linux, and U-Boot build directories.
 Comprehensive documentation is available in the `docs/` directory:
 
 - **[docs/PREREQUISITES.md](docs/PREREQUISITES.md)** - Detailed system requirements and dependencies
+- **[docs/MEMORY_MAP.md](docs/MEMORY_MAP.md)** - Quick reference for memory addresses and file updates ⭐
+- **[docs/device-tree/device-tree.md](docs/device-tree/device-tree.md)** - Device tree guide (DTS/DTB files)
+- **[docs/toolchain/toolchain.md](docs/toolchain/toolchain.md)** - RISC-V toolchain build guide (musl vs glibc)
+- **[docs/memory-map-and-device-tree.md](docs/memory-map-and-device-tree.md)** - Comprehensive memory layout and device tree guide
 - **[docs/prerequisites-and-issues.md](docs/prerequisites-and-issues.md)** - Build troubleshooting guide
-- **[docs/memory-map-and-device-tree.md](docs/memory-map-and-device-tree.md)** - Memory layout and device tree
 - **[docs/linux/](docs/linux/)** - Linux kernel configuration and customization
 - **[docs/opensbi/](docs/opensbi/)** - OpenSBI platform development
 - **[docs/u-boot/](docs/u-boot/)** - U-Boot integration guide
+
+### Memory Map Changes
+
+When modifying memory addresses or peripheral configurations, consult:
+1. **[MEMORY_MAP.md](docs/MEMORY_MAP.md)** for quick reference of what files to update
+2. **[memory-map-and-device-tree.md](docs/memory-map-and-device-tree.md)** for detailed procedures
+
+**Critical files that require synchronization:**
+- Device trees: `device-tree/ikr.dts`, `opensbi/firmware/ikr.dts`
+- OpenSBI: `opensbi/platform/ikr/objects.mk`, `opensbi/platform/ikr/platform.c`
+- U-Boot: `u-boot/configs/ikr_defconfig`, `u-boot/include/configs/ikr.h`
+- Build scripts: `scripts/build_disk_image.sh`
+- Emulator: `rvemu/src/bus.rs`
+
+See [docs/MEMORY_MAP.md](docs/MEMORY_MAP.md) for the complete file update matrix.
 
 ## Development Workflow
 
