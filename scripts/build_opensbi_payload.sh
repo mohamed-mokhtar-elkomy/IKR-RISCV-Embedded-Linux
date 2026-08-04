@@ -27,7 +27,12 @@ make -j"$(nproc)" \
     FW_PAYLOAD_PATH="${DISK_IMAGE}"
 
 FINAL_PAYLOAD="${OPENSBI_SRC_DIR}/build/platform/ikr/firmware/fw_payload.bin"
+FINAL_ASM="${OPENSBI_SRC_DIR}/build/platform/ikr/firmware/fw_payload.asm"
 cp -f "${FINAL_PAYLOAD}" "${OUTPUT_DIR}/fw_payload.bin"
+if [[ -f "${FINAL_ASM}" ]]; then
+    cp -f "${FINAL_ASM}" "${OUTPUT_DIR}/fw_payload.asm"
+    echo "Assembly file: ${OUTPUT_DIR}/fw_payload.asm"
+fi
 
 echo "OpenSBI build complete."
 echo "Source path: ${OPENSBI_SRC_DIR}"
