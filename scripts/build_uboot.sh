@@ -24,6 +24,14 @@ make "${DEFCONFIG}"
 make olddefconfig
 make -j"$(nproc)"
 
+if [[ ! -f "${UBOOT_SRC_DIR}/u-boot.bin" ]]; then
+	echo "Error: u-boot.bin not found at: ${UBOOT_SRC_DIR}/u-boot.bin" >&2
+	exit 1
+fi
+
+cp -f "${UBOOT_SRC_DIR}/u-boot.bin" "${OUTPUT_DIR}/u-boot.bin"
+
 echo "U-Boot build complete."
 echo "U-Boot source path: ${UBOOT_SRC_DIR}"
 echo "Defconfig used: ${DEFCONFIG}"
+echo "U-Boot binary output: ${OUTPUT_DIR}/u-boot.bin"

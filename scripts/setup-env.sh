@@ -9,12 +9,12 @@ export ROOT_DIR
 export OUTPUT_DIR="${ROOT_DIR}/output"
 mkdir -p "${OUTPUT_DIR}"
 
-export UBOOT_BIN="${ROOT_DIR}/u-boot/u-boot.bin"
-export KERNEL_IMAGE="${ROOT_DIR}/linux/arch/riscv/boot/Image"
+export UBOOT_BIN="${OUTPUT_DIR}/u-boot.bin"
+export KERNEL_IMAGE="${OUTPUT_DIR}/Image"
 export DISK_IMAGE="${OUTPUT_DIR}/disk.img"
 
 export TARGET=riscv64-unknown-linux-musl
-# export TARGET=riscv64-unknown-linux-gnuc
+# export TARGET=riscv64-unknown-linux-gnu
 export ARCH_FLAGS="-march=rv64ima_zicsr_zifencei -mabi=lp64"
 export TOOLCHAIN_DIR="${ROOT_DIR}/${TARGET}"
 export PREFIX="${TOOLCHAIN_DIR}"

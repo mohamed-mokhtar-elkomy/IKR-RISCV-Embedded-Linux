@@ -50,3 +50,8 @@ source scripts/setup-env.sh
   - `configs/linux/ikr-rootfs.config`
 - Script also sets `CONFIG_INITRAMFS_SOURCE` to `output/initramfs.cpio.gz`
 - Output: `output/Image`
+
+## Output
+
+- Source binary: `linux/arch/riscv/boot/Image`
+- Output copy: `output/Image` (used by disk image and OpenSBI builds)

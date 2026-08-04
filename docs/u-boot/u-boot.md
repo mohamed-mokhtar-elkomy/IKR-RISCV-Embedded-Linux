@@ -41,4 +41,5 @@ source scripts/setup-env.sh
 
 ## Output
 
-- Main binary: `u-boot/u-boot.bin`
+- Source binary: `u-boot/u-boot.bin`
+- Output copy: `output/u-boot.bin` (used by disk image build)
