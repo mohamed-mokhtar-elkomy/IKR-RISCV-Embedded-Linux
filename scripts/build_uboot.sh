@@ -21,6 +21,7 @@ make "${DEFCONFIG}"
 ./scripts/config --disable RISCV_ISA_C
 ./scripts/config --disable RISCV_ISA_F
 ./scripts/config --disable RISCV_ISA_D
+./scripts/config --disable TOOLS_MKEFICAPSULE
 make olddefconfig
 make -j"$(nproc)"
 

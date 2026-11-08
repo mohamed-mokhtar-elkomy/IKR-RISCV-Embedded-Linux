@@ -14,3 +14,4 @@ rvemu/
 tools/
 temp/
 trace.txt
+output/

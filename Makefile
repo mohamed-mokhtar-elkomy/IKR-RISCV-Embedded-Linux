@@ -1,6 +1,13 @@
 SHELL := /bin/bash
 export BASH_ENV := $(CURDIR)/scripts/setup-env.sh
 
+# C library used by the toolchain and every component built with it (musl|glibc).
+TOOLCHAIN_LIBC ?= musl
+export TOOLCHAIN_LIBC
+ifeq ($(filter $(TOOLCHAIN_LIBC),musl glibc),)
+$(error TOOLCHAIN_LIBC must be 'musl' or 'glibc' (got '$(TOOLCHAIN_LIBC)'))
+endif
+
 .PHONY: all help build-toolchain-musl build-toolchain-glibc build-opensbi build-linux \
         build-rootfs build-linux-embedded-rootfs build-uboot build-disk-image \
         build-opensbi-payload build-os build-board-hex build-board-mif \
@@ -36,7 +43,12 @@ help:
 	@echo "Cleanup:"
 	@echo "  clean                       - Clean all build artifacts"
 	@echo "  clean-all                   - Clean everything including toolchain"
+	@echo ""
+	@echo "Options:"
+	@echo "  TOOLCHAIN_LIBC=musl|glibc   - C library / toolchain to build with (default: musl)"
+	@echo "                                e.g. make build-os TOOLCHAIN_LIBC=glibc"
 
+build-toolchain-musl: export TOOLCHAIN_LIBC := musl
 build-toolchain-musl:
 	@echo "Building RISC-V toolchain with musl libc..."
 	./scripts/build_toolchain_musl.sh

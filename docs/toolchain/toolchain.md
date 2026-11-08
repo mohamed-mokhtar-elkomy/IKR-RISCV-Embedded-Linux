@@ -27,8 +27,18 @@
 **Install path:** `riscv64-unknown-linux-gnu/`  
 **Use for:** Full POSIX compliance, mainstream Linux compatibility
 
-Both toolchains can coexist. Switch between them by editing `TARGET` and
-`CROSS_COMPILE` in `scripts/setup-env.sh`.
+Both toolchains can coexist. Select one with the `TOOLCHAIN_LIBC` variable
+(`musl` by default); `scripts/setup-env.sh` derives `TARGET`, `TOOLCHAIN_DIR`
+and `CROSS_COMPILE` from it:
+
+```bash
+make build-toolchain-glibc
+make clean
+make build-os TOOLCHAIN_LIBC=glibc
+```
+
+Run `make clean` when switching libc so no objects built with the other
+toolchain are reused.
 
 ## Architecture and ABI
 
@@ -91,8 +101,7 @@ cd riscv-gnu-toolchain
     --prefix="${PWD}/../riscv64-unknown-linux-musl" \
     --with-arch=rv64ima_zicsr_zifencei \
     --with-abi=lp64 \
-    --enable-languages=c,c++ \
-    --disable-bootstrap \
+    --with-languages=c,c++ \
     --disable-multilib
 make musl -j$(nproc)
 ```
@@ -104,8 +113,7 @@ cd riscv-gnu-toolchain
     --prefix="${PWD}/../riscv64-unknown-linux-gnu" \
     --with-arch=rv64ima_zicsr_zifencei \
     --with-abi=lp64 \
-    --enable-languages=c,c++ \
-    --disable-bootstrap \
+    --with-languages=c,c++ \
     --disable-multilib
 make linux -j$(nproc)
 ```

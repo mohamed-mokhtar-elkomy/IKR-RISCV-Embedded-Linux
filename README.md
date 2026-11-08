@@ -79,26 +79,40 @@ This initializes all git submodules (Linux, U-Boot, OpenSBI, toolchain, etc.).
 
 ### 2. Build the Toolchain
 
-First, build the RISC-V cross-compiler toolchain (musl libc - recommended):
+First, build the RISC-V cross-compiler toolchain. Two C library variants are available. Pick one, or build both; they install side by side:
+
+| | **musl** (default) | **glibc** |
+|---|---|---|
+| Build command | `make build-toolchain-musl` | `make build-toolchain-glibc` |
+| Script | `scripts/build_toolchain_musl.sh` | `scripts/build_toolchain_glibc.sh` |
+| Install path | `riscv64-unknown-linux-musl/` | `riscv64-unknown-linux-gnu/` |
+| Compiler prefix | `riscv64-unknown-linux-musl-` | `riscv64-unknown-linux-gnu-` |
+| Static binaries | Small | Larger (more initramfs/flash space) |
+| Compatibility | Most POSIX software | Full GNU/Linux API, best for porting desktop software |
+| Choose when | You want a minimal, small-footprint system | You need glibc-specific APIs or behaviour |
 
 ```bash
-make build-toolchain-musl
+make build-toolchain-musl     # or: make build-toolchain-glibc
 ```
 
-**Note**: This step takes 30-60 minutes. The toolchain will be installed to `riscv64-unknown-linux-musl/`.
+**Note**: This step takes 30-90 minutes. Each script wipes and rebuilds its own install directory only.
 
-For glibc instead of musl (see [docs/toolchain/toolchain.md](docs/toolchain/toolchain.md) for differences):
-```bash
-make build-toolchain-glibc
-```
+The Linux kernel, U-Boot and OpenSBI do not use a C library; the choice only
+affects user-space programs (BusyBox and anything in [`apps/`](#5-run-your-own-c-programs)).
+See [docs/toolchain/toolchain.md](docs/toolchain/toolchain.md) for more details.
 
 ### 3. Build the Complete OS
 
 Build all components (rootfs, Linux kernel with embedded initramfs, U-Boot, and OpenSBI payload):
 
 ```bash
-make build-os
+make build-os                         # uses the musl toolchain
+make build-os TOOLCHAIN_LIBC=glibc    # uses the glibc toolchain
 ```
+
+The `TOOLCHAIN_LIBC` variable (`musl` or `glibc`, default `musl`) selects the
+toolchain for every `make build-*` target. Run `make clean` when switching
+between them so no objects built with the other toolchain are reused.
 
 This is equivalent to running:
 ```bash
@@ -126,6 +140,30 @@ rvemu/target/release/rvemu-cli -k output/fw_payload.bin
 
 **Note**: Press `Ctrl+C` to exit the emulator.
 
+### 5. Run Your Own C Programs
+
+Put C source files in the [`apps/`](apps/) directory. `make build-rootfs`
+(and therefore `make build-os`) cross-compiles every `apps/<name>.c` with the
+selected toolchain and installs it as `/usr/bin/<name>` in the root filesystem.
+Programs are linked statically, so no shared libraries are needed on the target.
+
+```bash
+cp myprog.c apps/
+make build-os TOOLCHAIN_LIBC=glibc   # rebuild: the rootfs is embedded in the kernel
+make run-rvemu
+```
+
+Then at the target shell:
+
+```
+root@ikr# myprog
+```
+
+Included examples:
+- `apps/hello.c` - prints a greeting
+- `apps/libc_info.c` - prints which C library the system uses, e.g. `C library: glibc 2.xx`
+  (use it to confirm a glibc build; a musl build prints `not glibc (likely musl)`)
+
 ## Expected Output
 
 When the system boots successfully, you should see:
@@ -151,6 +189,9 @@ root@ikr#
 
 ```
 rp-workspace/
+├── apps/                      # Your C programs, built into /usr/bin on the target
+│   ├── hello.c
+│   └── libc_info.c
 ├── busybox/                    # BusyBox source and rootfs build artifacts
 ├── configs/                    # Configuration files for all components
 │   ├── busybox/               # BusyBox configurations
@@ -172,7 +213,9 @@ rp-workspace/
 ├── rvemu/                     # RISC-V emulator for testing
 ├── qemu/                      # QEMU emulator (optional)
 ├── scripts/                   # Build automation scripts
+│   ├── setup-env.sh           # Selects toolchain from TOOLCHAIN_LIBC
 │   ├── build_toolchain_musl.sh
+│   ├── build_toolchain_glibc.sh
 │   ├── build_linux.sh
 │   ├── build_opensbi.sh
 │   ├── build_uboot.sh
@@ -312,7 +355,7 @@ See [docs/MEMORY_MAP.md](docs/MEMORY_MAP.md) for the complete file update matrix
 
 1. **Modify source code**: Edit files in the respective component directories (linux/, opensbi/, u-boot/)
 2. **Update configurations**: Modify files in `configs/` if needed
-3. **Rebuild component**: Run `make build-<component>`
+3. **Rebuild component**: Run `make build-<component>` (add `TOOLCHAIN_LIBC=glibc` if you use the glibc toolchain)
 4. **Test**: Run with `make run-rvemu`
 
 ### Building for Hardware

@@ -21,11 +21,16 @@ mkdir -p "${TOOLCHAIN_DIR}"
     --prefix="${TOOLCHAIN_DIR}" \
     --with-arch=rv64ima_zicsr_zifencei \
     --with-abi=lp64 \
-    --enable-languages=c,c++ \
-    --disable-bootstrap \
+    --with-languages=c,c++ \
     --disable-multilib
 
-make -j$(nproc) linux
+# The install dir was wiped above, so drop the stamps/ and build-* dirs of any
+# previous run; otherwise make skips steps whose output no longer exists.
+make clean
+
+# The gprofng copy bundled with gdb does not build against host glibc >= 2.43
+# (strstr & co. became _Generic macros); it is a host profiler we don't need.
+make -j$(nproc) GDB_TARGET_FLAGS_EXTRA=--disable-gprofng linux
 
 echo "Toolchain build complete."
 echo "Install path: ${TOOLCHAIN_DIR}"

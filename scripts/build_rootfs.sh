@@ -45,6 +45,17 @@ make ARCH="${ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" CONFIG_PREFIX="${BUSYBOX_SR
 
 mkdir -p "${BUSYBOX_SRC_DIR}/_install"/{proc,sys,dev}
 
+# Cross-compile every apps/<name>.c into /usr/bin/<name> on the target.
+# Linked statically, so the rootfs does not need the libc shared libraries.
+APPS_DIR="${ROOT_DIR}/apps"
+shopt -s nullglob
+for src in "${APPS_DIR}"/*.c; do
+	app="$(basename "${src}" .c)"
+	"${CROSS_COMPILE}gcc" ${ARCH_FLAGS} -O2 -static -o "${BUSYBOX_SRC_DIR}/_install/usr/bin/${app}" "${src}"
+	echo "Built app: /usr/bin/${app}"
+done
+shopt -u nullglob
+
 # Create init directly in the installed rootfs.
 cat > "${BUSYBOX_SRC_DIR}/_install/init" <<'EOF'
 #!/bin/sh
